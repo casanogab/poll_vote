@@ -19,10 +19,11 @@ class Poll_Plugin
     {
           register_activation_hook(__FILE__, array('Poll_Plugin', 'install'));
           new Vote();
-          # ne 'sapplique qu'à la désactivation du pluggin
+          # ne 'sapplique qu'à la désactivation du pluggin JE FLUSH LA TABLE
           #register_deactivation_hook()
+          register_deactivation_hook(__FILE__, array('Poll_Plugin', 'dropTables'));
           # ne s'active que s'il y a suppression du pluggin
-          register_uninstall_hook(__FILE__, array('Poll_Plugin', 'uninstall'));          
+          register_uninstall_hook(__FILE__, array('Poll_Plugin', 'dropTables'));          
     }
 
     /**
@@ -36,10 +37,10 @@ class Poll_Plugin
     }
 
     /**
-     * Fonction de désinstallation
+     * Fonction de dropTables
      * Suppression des tables du sondage
      */
-    public function uninstall()
+    public function dropTables()
     {
         global $wpdb;
         $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}poll_options;");
