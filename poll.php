@@ -19,7 +19,10 @@ class Poll_Plugin
     {
           register_activation_hook(__FILE__, array('Poll_Plugin', 'install'));
           new Vote();
-          
+          # ne 'sapplique qu'à la désactivation du pluggin
+          #register_deactivation_hook()
+          # ne s'active que s'il y a suppression du pluggin
+          register_uninstall_hook(__FILE__, array('Poll_Plugin', 'uninstall'));          
     }
 
     /**
@@ -38,6 +41,9 @@ class Poll_Plugin
      */
     public function uninstall()
     {
+        global $wpdb;
+        $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}poll_options;");
+        $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}poll_results;");
     }
 }
 
