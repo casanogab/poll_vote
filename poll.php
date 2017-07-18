@@ -17,7 +17,9 @@ class Poll_Plugin
      */
     public function __construct()
     {
+          register_activation_hook(__FILE__, array('Poll_Plugin', 'install'));
           new Vote();
+          
     }
 
     /**
@@ -25,6 +27,9 @@ class Poll_Plugin
      */
     public function install()
     {
+          global $wpdb;
+          $wpdb->query("CREATE TABLE IF NOT EXISTS {$wpdb->prefix}poll_options (id INT AUTO_INCREMENT PRIMARY KEY, label VARCHAR(255) NOT NULL);");
+          $wpdb->query("CREATE TABLE IF NOT EXISTS {$wpdb->prefix}poll_results (option_id INT NOT NULL, total INT NOT NULL);");
     }
 
     /**
