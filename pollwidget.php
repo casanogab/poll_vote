@@ -25,14 +25,24 @@ class Poll_Widget extends WP_Widget
       ?>
       <form action="" method="post">
           <p>
-                <input type="radio" name="rdb_fruits" value="oranges"> oranges<br>
-                <input type="radio" name="rdb_fruits" value="pommes"> pommes <br>
-                <input type="radio" name="rdb_fruits" value="poires"> poires <br>
-                <input type="radio" name="rdb_fruits" value="peches"> pèches <br>
+
+                <input type="radio" name="rdb_fruits" value="1"> oranges<br>
+                <input type="radio" name="rdb_fruits" value="2"> pommes <br>
+                <input type="radio" name="rdb_fruits" value="3"> poires <br>
+                <input type="radio" name="rdb_fruits" value="4"> pèches <br>
+
           </p>
           <input type="submit" value="envoyer"/>
       </form>
       <?php
+      
+        #if(isset($_POST['submit'])){
+          if (1==1){
+           $voteEffectue = $_POST['rdb_fruits']; 
+             # echo "fruit choisi".$voteEffectue;
+              global $wpdb;
+              $wpdb->insert("{$wpdb->prefix}poll_results", array('option_id' => $voteEffectue, 'total' => '1000' ));
+        }
       echo $args['after_widget'];
     }
 
