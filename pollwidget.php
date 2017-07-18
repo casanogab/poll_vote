@@ -25,7 +25,7 @@ class Poll_Widget extends WP_Widget
       ?>
       <form action="" method="post">
           <p>
-                <input type="radio" name="rdb_fruits" value="oranges">oranges<br>
+                <input type="radio" name="rdb_fruits" value="oranges"> oranges<br>
                 <input type="radio" name="rdb_fruits" value="pommes"> pommes <br>
                 <input type="radio" name="rdb_fruits" value="poires"> poires <br>
                 <input type="radio" name="rdb_fruits" value="peches"> pèches <br>
