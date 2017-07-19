@@ -48,12 +48,24 @@ class Poll_Widget extends WP_Widget
   public function questionnaireDePollResults()
     {
     ?>
+      
+
       <form action="" method="post">
           <p>
-                <input type="radio" name="rdb_fruits" value="1"> oranges<br>
-                <input type="radio" name="rdb_fruits" value="2"> pommes <br>
-                <input type="radio" name="rdb_fruits" value="3"> poires <br>
-                <input type="radio" name="rdb_fruits" value="4"> pêches <br>
+             <?php
+               global $wpdb;
+                $totalOptions = $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}poll_options" );   
+                #echo "ceci".$totalOptions;
+                for ($cpt = 1; $cpt <= $totalOptions ; $cpt++) {
+                    $row = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}poll_options WHERE id = '$cpt'"); 
+                    #  echo $row->label;
+                    echo "<input type=\"radio\" name=\"rdb_fruits\" value=\"$cpt\">$row->label<br>";
+                }
+              ?>
+                <input type="radio" name="rdb_fruits" value="1"> oranges<br><br>
+                <input type="radio" name="rdb_fruits" value="2"> pommes <br><br>
+                <input type="radio" name="rdb_fruits" value="3"> poires <br><br>
+                <input type="radio" name="rdb_fruits" value="4"> pêches <br><br>
 
           </p>
           <input type="submit" value="envoyer"/>
@@ -66,12 +78,12 @@ class Poll_Widget extends WP_Widget
             global $wpdb;
             $row = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}poll_results WHERE option_id = 1");
     ?>
-        <label>Résultats: </label>
+        <br><label>Résultats: </label><br><br>
           <p>
-              <label>Oranges: <?php echo $wpdb->get_row("SELECT * FROM {$wpdb->prefix}poll_results WHERE option_id = 1")->total;?> votes </label> <br>
-              <label>Pommes:  <?php echo $wpdb->get_row("SELECT * FROM {$wpdb->prefix}poll_results WHERE option_id = 2")->total;?> votes </label> <br>
-              <label>Poires:  <?php echo $wpdb->get_row("SELECT * FROM {$wpdb->prefix}poll_results WHERE option_id = 3")->total;?> votes </label> <br>
-              <label>Pêches:  <?php echo $wpdb->get_row("SELECT * FROM {$wpdb->prefix}poll_results WHERE option_id = 4")->total;?> votes </label> <br>
+              <label>Oranges: <?php echo $wpdb->get_row("SELECT * FROM {$wpdb->prefix}poll_results WHERE option_id = 1")->total;?> votes </label> <br><br>
+              <label>Pommes:  <?php echo $wpdb->get_row("SELECT * FROM {$wpdb->prefix}poll_results WHERE option_id = 2")->total;?> votes </label> <br><br>
+              <label>Poires:  <?php echo $wpdb->get_row("SELECT * FROM {$wpdb->prefix}poll_results WHERE option_id = 3")->total;?> votes </label> <br><br>
+              <label>Pêches:  <?php echo $wpdb->get_row("SELECT * FROM {$wpdb->prefix}poll_results WHERE option_id = 4")->total;?> votes </label> <br><br>
           </p>
 
       <?php        
