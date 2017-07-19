@@ -14,8 +14,7 @@ class Poll_Widget extends WP_Widget
       add_action('monHookUpdateDansPollResults', array($this, 'updateDansPollResults')); 
       add_action('monHookQuestionnaireDePollResults', array($this, 'questionnaireDePollResults'));
       add_action('monHookRenduDePollResults', array($this, 'renduDePollResults')); 
-      add_action('monHookAjoutDeNouvellesOptions', array($this, 'ajoutDeNouvellesOptions'));
-      add_action('monHookInsertDansPollResultsEtPollOptions', array($this, 'insertDansPollResultsEtPollOptions'));
+
       
     }
 
@@ -101,37 +100,5 @@ class Poll_Widget extends WP_Widget
       </p>
       <?php
       #Jusqu'à ici Sondage
-      do_action('monHookAjoutDeNouvellesOptions');
-
-        if(isset($_POST['rdb_fruits_admin'])){
-           $nouvelleOptions = $_POST['rdb_fruits_admin']; 
-             do_action('monHookInsertDansPollResultsEtPollOptions', $nouvelleOptions);
-        }
-    }
-   public function ajoutDeNouvellesOptions()
-   {
-     ?>
-      <form action="" method="post">
-          <p>
-             <?php
-               global $wpdb;
-                $totalOptions = $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}poll_options" );   
-                for ($cpt = 1; $cpt <= $totalOptions ; $cpt++) {
-                    $row = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}poll_options WHERE id = '$cpt'"); 
-                    echo "<input type=\"text\" name=\"rdb_fruits_admin\" value=\"$row->label\"><br><br>";
-                }
-                     
-              ?>
-          Ajouter une nouvelle réponse<input type="text" name="rdb_fruits_nouveau"><br><br>
-          </p>
-          <input type="submit" value="envoyer"/>
-      </form>
-      <?php      
-
-   }
-   public function insertDansPollResultsEtPollOptions()
-   {
-    
-   }
-  
+    }  
 }
