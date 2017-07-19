@@ -55,18 +55,11 @@ class Poll_Widget extends WP_Widget
              <?php
                global $wpdb;
                 $totalOptions = $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}poll_options" );   
-                #echo "ceci".$totalOptions;
                 for ($cpt = 1; $cpt <= $totalOptions ; $cpt++) {
                     $row = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}poll_options WHERE id = '$cpt'"); 
-                    #  echo $row->label;
-                    echo "<input type=\"radio\" name=\"rdb_fruits\" value=\"$cpt\">$row->label<br>";
+                    echo "<input type=\"radio\" name=\"rdb_fruits\" value=\"$cpt\">$row->label<br><br>";
                 }
               ?>
-                <input type="radio" name="rdb_fruits" value="1"> oranges<br><br>
-                <input type="radio" name="rdb_fruits" value="2"> pommes <br><br>
-                <input type="radio" name="rdb_fruits" value="3"> poires <br><br>
-                <input type="radio" name="rdb_fruits" value="4"> pêches <br><br>
-
           </p>
           <input type="submit" value="envoyer"/>
       </form>
