@@ -64,6 +64,23 @@ class Poll_Plugin
         $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}poll_results;");
     }
 
+    public function modificationAuxFruits()
+    {
+         global $wpdb;
+         $totalOptions = $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}poll_options" );  
+         for ($cpt = 1; $cpt <= $totalOptions ; $cpt++) 
+         {
+          $labelActuel = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}poll_options WHERE id = '$cpt'")->label;
+              if ($_POST['rdb_fruits_admin'.$cpt] != $labelActuel){
+                echo "<br>changement".$cpt;
+              } 
+              
+          } 
+         
+    }
+
+
+
     public function add_admin_menu()
     {
       add_menu_page('lepluginPoll', 'Pollplugin', 'manage_options', 'poll', array($this, 'menu_html'));
@@ -89,7 +106,7 @@ class Poll_Plugin
                 $totalOptions = $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}poll_options" );   
                 for ($cpt = 1; $cpt <= $totalOptions ; $cpt++) {
                     $row = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}poll_options WHERE id = '$cpt'"); 
-                    echo "<input type=\"text\" name=\"rdb_fruits_admin\" value=\"$row->label\"><br><br>";
+                    echo "<input type=\"text\" name=\"rdb_fruits_admin$cpt\" value=\"$row->label\"><br><br>";
                 }
                      
               ?>
@@ -106,7 +123,8 @@ class Poll_Plugin
     
     public function ajoutDeNouvellesOptions()
     {
-      echo "<p> CECI</p>".$_POST['rdb_fruits_admin'];      
+      echo "<p> CECI</p>".$_POST['rdb_fruits_admin3']; 
+      $this->modificationAuxFruits();     
       if(isset($_POST['nouveauFruits']) && !empty($_POST['nouveauFruits'])){
         
         $nouveauFruits = $_POST['nouveauFruits']; 
