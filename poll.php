@@ -25,9 +25,10 @@ class Poll_Plugin
           # ne s'active que s'il y a suppression du pluggin
           register_uninstall_hook(__FILE__, array('Poll_Plugin', 'dropTables'));   
           #ajout d'un menu
-          add_action('admin_menu', array($this, 'add_admin_menu'),11);  
-          add_action('monHookAjoutDeNouvellesOptions', array($this, 'ajoutDeNouvellesOptions'),10);
-          add_action('monHookInsertDansPollResultsEtPollOptions', array($this, 'insertDansPollResultsEtPollOptions'),9);     
+          add_action('admin_menu', array($this, 'add_admin_menu'),20);  
+          add_action('monHookAjoutDeNouvellesOptions', array($this, 'ajoutDeNouvellesOptions'));
+          add_action('monHookInsertDansPollResultsEtPollOptions', array($this, 'insertDansPollResultsEtPollOptions')); 
+          add_action('admin_init', array($this, 'register_settings'));    
     }
 
     /**
@@ -58,21 +59,26 @@ class Poll_Plugin
         $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}poll_options;");
         $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}poll_results;");
     }
+
     public function add_admin_menu()
     {
       add_menu_page('lepluginPoll', 'Pollplugin', 'manage_options', 'poll', array($this, 'menu_html'));
+      #add_submenu_page('poll', 'Apercu', 'Apercu', 'manage_options', 'poll', array($this, 'menu_html'));
+      $hook =add_submenu_page('poll', 'LePoll', 'LePoll', 'manage_options', 'sousmenu4', array($this, 'menu_html'));
+         add_action('load-'.$hook, array($this, 'process_action'));
     }
     public function menu_html()
     {
     echo '<h1>'.get_admin_page_title().'</h1>';
     echo '<p>Bienvenue sur la page d\'accueil du plugin Poll</p>';
-          do_action('monHookAjoutDeNouvellesOptions');
-    }
-    public function ajoutDeNouvellesOptions()
-   {
      ?>
-      <form action="" method="post">
-          <p>
+        <!--<form action="options.php" method="post">-->
+          <form action="" method="post">
+          <p>    
+          <?php do_action('monHookAjoutDeNouvellesOptions'); ?>
+          <?php settings_fields('la_question_du_poll_settings') ?>
+          <?php# add_settings_field('la_question_du_poll', 'QUESTION2222222222', array($this, 'sender_html'), 'la_question_du_poll_settings', 'la_question_du_poll_section'); ?>
+          <?php do_settings_sections('la_question_du_poll_settings') ?>
              <?php
                global $wpdb;
                 $totalOptions = $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}poll_options" );   
@@ -84,15 +90,51 @@ class Poll_Plugin
               ?>
           Ajouter une nouvelle réponse<input type="text" name="nouveauFruits"><br><br>
           </p>
-          <input type="submit" value="envoyer"/>
+          <?php submit_button(); ?>
       </form>
-      <?php  
-           if(isset($_POST['nouveauFruits'])  && !empty($_POST['nouveauFruits'])){
-             $nouveauFruits = $_POST['nouveauFruits']; 
-             do_action('monHookInsertDansPollResultsEtPollOptions', $nouveauFruits);
-           }    
+      <form>
+       <input type="hidden" name="reinitialise" value="1"/>
+       <?php submit_button("Réinitiliaser les options et les résultats"); ?>
+      </form>
+     <?php 
+    }
+    
+    public function ajoutDeNouvellesOptions()
+    {
+      echo "<p> CECI</p>".$_POST['rdb_fruits_admin'];      
+      if(isset($_POST['nouveauFruits']) && !empty($_POST['nouveauFruits'])){
+        
+        $nouveauFruits = $_POST['nouveauFruits']; 
+        do_action('monHookInsertDansPollResultsEtPollOptions', $nouveauFruits);
+     }  
+   
+    }
 
+    public function register_settings()
+    {
+    register_setting('la_question_du_poll_settings', 'la_question_du_poll_INPUT_TEXT');
+
+    add_settings_section('la_question_du_poll_section', 'La section du poll settings', array($this, 'section_html'), 'la_question_du_poll_settings');
+
+    add_settings_field('la_question_du_poll_INPUT_TEXT', 'Question ici', array($this, 'question_html'), 'la_question_du_poll_settings', 'la_question_du_poll_section');
    }
+
+    public function section_html()
+    {
+    echo 'Renseignez les paramètres du pluggin de pool.';
+    }
+    
+    public function question_html()
+    {?>
+     <input type="text" name="la_question_du_poll_INPUT_TEXT" value="<?php echo get_option('la_question_du_poll_INPUT_TEXT')?>"/>
+    <?php
+    }
+    public function process_action()
+     {
+      if (isset($_POST['send_newsletter'])) {
+        $this->send_newsletter();
+       }
+     }
    public function insertDansPollResultsEtPollOptions($nouveauFruits)
    {
             global $wpdb;
@@ -102,8 +144,6 @@ class Poll_Plugin
             $wpdb->insert("{$wpdb->prefix}poll_results", array('option_id' =>  $nouvelID, 'total' => 0 ));        
     
    }
-  
-    
 }
 
 new Poll_Plugin();
