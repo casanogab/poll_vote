@@ -28,7 +28,11 @@ class Poll_Plugin
           add_action('admin_menu', array($this, 'add_admin_menu'),20);  
           add_action('monHookAjoutDeNouvellesOptions', array($this, 'ajoutDeNouvellesOptions'));
           add_action('monHookInsertDansPollResultsEtPollOptions', array($this, 'insertDansPollResultsEtPollOptions')); 
-          add_action('admin_init', array($this, 'register_settings'));    
+          add_action('admin_init', array($this, 'register_settings')); 
+          if (isset($_POST['reinitialise'])) {
+            $this->dropTables();
+            $this->install();
+          }   
     }
 
     /**
@@ -63,8 +67,9 @@ class Poll_Plugin
     public function add_admin_menu()
     {
       add_menu_page('lepluginPoll', 'Pollplugin', 'manage_options', 'poll', array($this, 'menu_html'));
-      #add_submenu_page('poll', 'Apercu', 'Apercu', 'manage_options', 'poll', array($this, 'menu_html'));
-      $hook =add_submenu_page('poll', 'LePoll', 'LePoll', 'manage_options', 'sousmenu4', array($this, 'menu_html'));
+
+      add_submenu_page('poll', 'Apercu', 'Apercu', 'manage_options', 'poll', array($this, 'menu_html'));
+      $hook =add_submenu_page('poll', 'Poll', 'Poll', 'manage_options', 'sousmenu4', array($this, 'menu_html'));
          add_action('load-'.$hook, array($this, 'process_action'));
     }
     public function menu_html()
@@ -92,7 +97,7 @@ class Poll_Plugin
           </p>
           <?php submit_button(); ?>
       </form>
-      <form>
+      <form method="post" action="">
        <input type="hidden" name="reinitialise" value="1"/>
        <?php submit_button("Réinitiliaser les options et les résultats"); ?>
       </form>
@@ -131,9 +136,7 @@ class Poll_Plugin
     }
     public function process_action()
      {
-      if (isset($_POST['send_newsletter'])) {
-        $this->send_newsletter();
-       }
+ 
      }
    public function insertDansPollResultsEtPollOptions($nouveauFruits)
    {
