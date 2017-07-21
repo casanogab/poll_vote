@@ -55,6 +55,7 @@ class Poll_Plugin
       {
         $wpdb->insert("{$wpdb->prefix}poll_results", array('option_id' => $cpt, 'total' => '0' ));
       }
+      $wpdb->update("wp_options", array('option_name' => 'la_question_du_poll', 'option_value' => 'Quel est votre fruit préféré ?' ),array('option_name' => 'la_question_du_poll')); 
   }
 
     /**
@@ -88,17 +89,17 @@ class Poll_Plugin
   {
       global $wpdb;
       #ici je n'ai pas mis {$wpdb->prefix} car {$wpdb->prefix} == wp_poll
-      $questionActuelle = $wpdb->get_row("SELECT * FROM wp_options WHERE option_name = 'la_question_du_poll_INPUT_TEXT'")->option_value;
+      $questionActuelle = $wpdb->get_row("SELECT * FROM wp_options WHERE option_name = 'la_question_du_poll'")->option_value;
       if (($_POST['la_question_du_poll_INPUT_TEXT'] != $questionActuelle) && !empty($_POST['la_question_du_poll_INPUT_TEXT']))
       {
         $changementDeTexte = $_POST['la_question_du_poll_INPUT_TEXT'];
-        $wpdb->update("wp_options", array('option_name' => 'la_question_du_poll_INPUT_TEXT', 'option_value' => $changementDeTexte ),array('option_name' => 'la_question_du_poll_INPUT_TEXT')); 
+        $wpdb->update("wp_options", array('option_name' => 'la_question_du_poll', 'option_value' => $changementDeTexte ),array('option_name' => 'la_question_du_poll')); 
       }             
   }
 
   public function add_admin_menu()
   {
-    add_menu_page('lepluginPoll', 'Pollplugin', 'manage_options', 'poll', array($this, 'menu_html'));
+    add_options_page('lepluginPoll', 'Pollplugin', 'manage_options', 'poll', array($this, 'menu_html'));
     add_submenu_page('poll', 'Apercu', 'Apercu', 'manage_options', 'poll', array($this, 'menu_html'));
     $hook =add_submenu_page('poll', 'Poll', 'Poll', 'manage_options', 'sousmenu4', array($this, 'menu_html'));
     add_action('load-'.$hook, array($this, 'process_action'));
@@ -113,8 +114,8 @@ class Poll_Plugin
       <?php global $wpdb;  
       do_action('monHookAjoutDeNouvellesOptions'); 
       ?>
-      Veuillez 
-      <input type="text" name="la_question_du_poll_INPUT_TEXT" value="<?php echo $wpdb->get_row("SELECT * FROM wp_options WHERE option_name = 'la_question_du_poll_INPUT_TEXT'")->option_value;?>"/><br>
+      Veuillez entrer la question du sondage
+      <input type="text" name="la_question_du_poll_INPUT_TEXT" value="<?php echo $wpdb->get_row("SELECT * FROM wp_options WHERE option_name = 'la_question_du_poll'")->option_value;?>"/><br><br>
       <?php
       $totalOptions = $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}poll_options" );   
       for ($cpt = 1; $cpt <= $totalOptions ; $cpt++) 
