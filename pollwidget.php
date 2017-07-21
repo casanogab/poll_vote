@@ -10,7 +10,13 @@ class Poll_Widget extends WP_Widget
      */
     public function __construct()
     {
+
       parent::__construct('gab_Vote_Fruits', 'Vote_Fruits', array('description' => 'Un formulaire de vote sur les fruits favoris.'));
+      add_action('monHooksetLeCookie', array($this, 'setLeCookie'));
+      #   $v_username = "allo";
+       #  $v_value = "ceci";
+       #  setcookie( $v_username, $v_value, 30 * DAYS_IN_SECONDS); 
+      #$this->setLeCookie();   
       add_action('monHookUpdateDansPollResults', array($this, 'updateDansPollResults')); 
       add_action('monHookQuestionnaireDePollResults', array($this, 'questionnaireDePollResults'));
       add_action('monHookRenduDePollResults', array($this, 'renduDePollResults')); 
@@ -18,13 +24,21 @@ class Poll_Widget extends WP_Widget
       
     }
 
-
+    public function setLeCookie()
+    {
+      if(isset($_POST['rdb_fruits'])){
+         $v_username = "allo";
+         $v_value = "ceci";
+         setcookie( $v_username, $v_value, 30 * DAYS_IN_SECONDS);    
+        }
+    }
     /**
      * Affichage du widget Du coté client
      */
 
     public function widget($args, $instance)
     {
+  
       echo $args['before_widget'];
       echo $args['before_title'];
       echo apply_filters('widget_title', $instance['title']);
@@ -34,7 +48,8 @@ class Poll_Widget extends WP_Widget
         if(isset($_POST['rdb_fruits'])){
            $vote = $_POST['rdb_fruits']; 
              do_action('monHookUpdateDansPollResults', $vote);
-        }
+         
+         }
        do_action('monHookRenduDePollResults');
       echo $args['after_widget'];
     }
@@ -44,7 +59,10 @@ class Poll_Widget extends WP_Widget
             global $wpdb;
             $row = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}poll_results WHERE option_id = '$vote'");
             $totalTmp = $row->total + 1;
-            $wpdb->update("{$wpdb->prefix}poll_results", array('option_id' => $vote, 'total' => $totalTmp ),array('option_id' => $vote));         
+            $wpdb->update("{$wpdb->prefix}poll_results", array('option_id' => $vote, 'total' => $totalTmp ),array('option_id' => $vote));
+            
+                    
+                   
     }
  
   public function questionnaireDePollResults()
@@ -68,7 +86,17 @@ class Poll_Widget extends WP_Widget
 
   public function renduDePollResults()
     {
- 
+
+      $v_username = "allo";
+      $v_value = "ceci";
+       if(!isset($_COOKIE[$v_username])) {
+        echo "The cookie: '" . $v_username . "' is not set.";
+      } else {
+        echo "The cookie '" . $v_username . "' is set.";
+        echo "Cookie is:  " . $_COOKIE[$v_username];
+      }
+
+
       ?>
         <br><label>Résultats: </label><br><br>
           <p>
