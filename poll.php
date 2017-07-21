@@ -113,7 +113,8 @@ class Poll_Plugin
       <?php global $wpdb;  
       do_action('monHookAjoutDeNouvellesOptions'); 
       ?>
-      <input type="text" name="la_question_du_poll_INPUT_TEXT" value="<?php echo $wpdb->get_row("SELECT * FROM wp_options WHERE option_name = 'la_question_du_poll_INPUT_TEXT'")->option_value;?>"/>
+      Veuillez 
+      <input type="text" name="la_question_du_poll_INPUT_TEXT" value="<?php echo $wpdb->get_row("SELECT * FROM wp_options WHERE option_name = 'la_question_du_poll_INPUT_TEXT'")->option_value;?>"/><br>
       <?php
       $totalOptions = $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}poll_options" );   
       for ($cpt = 1; $cpt <= $totalOptions ; $cpt++) 
@@ -134,7 +135,6 @@ class Poll_Plugin
     
   public function ajoutDeNouvellesOptions()
   {
-    echo "<p> CECI</p>".$_POST['rdb_fruits_admin3']; 
     do_action('monHookmodificationAuxFruits');
     do_action('monHookmodificationDeLaQuestion');
     if(isset($_POST['nouveauFruits']) && !empty($_POST['nouveauFruits']))
@@ -150,8 +150,7 @@ class Poll_Plugin
     $totalOptions = $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}poll_options" );
     $nouvelID = $totalOptions + 1;
     $wpdb->insert("{$wpdb->prefix}poll_options", array('id' =>  $nouvelID, 'label' => $nouveauFruits ));
-    $wpdb->insert("{$wpdb->prefix}poll_results", array('option_id' =>  $nouvelID, 'total' => 0 ));        
-    
+    $wpdb->insert("{$wpdb->prefix}poll_results", array('option_id' =>  $nouvelID, 'total' => 0 ));           
   }
 }
 
