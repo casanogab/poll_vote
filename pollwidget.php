@@ -20,12 +20,13 @@ class Poll_Widget extends WP_Widget
 
   public function setLeCookie()
   {
-    if(isset($_POST['rdb_fruits'])){
-       $vis_username = "allo";
-       $vis_value = "ceci";
-       setcookie( $vis_username, $vis_value, time() + ( 7 * DAY_IN_SECONDS ), COOKIEPATH, COOKIE_DOMAIN);          
+    if(isset($_POST['rdb_fruits']))
+    {
+       $cookie_nom = "vote";
+       $cookie_valeur = "effectue";
+       setcookie( $cookie_nom, $cookie_valeur, time() + ( 7 * DAY_IN_SECONDS ), COOKIEPATH, COOKIE_DOMAIN);          
        header('Location: '.$_SERVER['PHP_SELF']);  
-        die;
+       die;
       }
   }
   /**
@@ -35,14 +36,9 @@ class Poll_Widget extends WP_Widget
   public function widget($args, $instance)
   {
     echo $args['before_widget'];
-
     echo $args['before_title'];
     echo apply_filters('widget_title', $instance['title']);
     echo $args['after_title'];
-
-   
-
-   
     do_action('monHookQuestionnaireDePollResults');
     if(isset($_POST['rdb_fruits']))
     {
@@ -65,47 +61,43 @@ class Poll_Widget extends WP_Widget
   public function questionnaireDePollResults()
   {
   ?>
-    <form action="" method="post">
-        <p>
-           <?php
-             global $wpdb;
-              $totalOptions = $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}poll_options" );   
-              for ($cpt = 1; $cpt <= $totalOptions ; $cpt++) {
-                  $row = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}poll_options WHERE id = '$cpt'"); 
-                  echo "<input type=\"radio\" name=\"rdb_fruits\" value=\"$cpt\">$row->label<br><br>";
-              }
-            ?>
-        </p>
-    <?php 
-    $vis_username = "allo";
-    $vis_value = "ceci";
-    if(!isset($_COOKIE[$vis_username])) {
-           echo"<input type='submit' value='enregistrer mon vote'>";
-    }
-     ?>
-    </form>
-    <?php        
+      <form action="" method="post">
+          <p>
+             <?php
+               global $wpdb;
+                $totalOptions = $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}poll_options" );   
+                for ($cpt = 1; $cpt <= $totalOptions ; $cpt++) {
+                    $row = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}poll_options WHERE id = '$cpt'"); 
+                    echo "<input type=\"radio\" name=\"rdb_fruits\" value=\"$cpt\">$row->label<br><br>";
+                }
+              ?>
+          </p>
+      <?php 
+      $cookie_nom = "vote";
+      $cookie_valeur = "effectue";
+      if(!isset($_COOKIE[$cookie_nom])) {
+             echo"<input type='submit' value='enregistrer mon vote'>";
+      }
+       ?>
+      </form>
+  <?php        
   }
 
   public function renduDePollResults()
   {
-
-
-
-    ?>
-      <br><label>Résultats: </label><br><br>
-        <p>
-          <?php
-           global $wpdb;
-           $totalOptions = $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}poll_options" );  
-           for ($cpt = 1; $cpt <= $totalOptions ; $cpt++) {
-                echo $wpdb->get_row("SELECT * FROM {$wpdb->prefix}poll_options WHERE id = '$cpt'")->label." ";
-                echo $wpdb->get_row("SELECT * FROM {$wpdb->prefix}poll_results WHERE option_id = '$cpt'")->total." votes<br><br>";
-            } 
-          ?>
-        </p>
-
-    <?php        
+  ?>
+    <br><label>Résultats: </label><br><br>
+      <p>
+        <?php
+         global $wpdb;
+         $totalOptions = $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->prefix}poll_options" );  
+         for ($cpt = 1; $cpt <= $totalOptions ; $cpt++) {
+              echo $wpdb->get_row("SELECT * FROM {$wpdb->prefix}poll_options WHERE id = '$cpt'")->label." ";
+              echo $wpdb->get_row("SELECT * FROM {$wpdb->prefix}poll_results WHERE option_id = '$cpt'")->total." votes<br><br>";
+          } 
+        ?>
+      </p>
+  <?php        
   }
 
   /**
